@@ -2,15 +2,20 @@ from mastodon import Mastodon
 from os import path
 from bs4 import BeautifulSoup
 import re
+import sys
 
 api_base_url = "https://botsin.space"
 scopes = ["read:statuses", "read:accounts", "read:follows", "write:statuses"]
+usercred_secret = path.join(sys.argv[1], "usercred.secret")
+# clientcred_secret = path.join(sys.argv[1], "usercred.secret")
+clientcred_secret = "clientcred.secret"
+corpus = path.join(sys.argv[1], "corpus.txt")
 
-if not path.exists("clientcred.secret"):
+if not path.exists(clientcred_secret):
     print("No clientcred.secret, registering application")
-    Mastodon.create_app("ebooks", api_base_url=api_base_url, to_file="clientcred.secret", scopes=scopes)
+    Mastodon.create_app("ebooks", api_base_url=api_base_url, to_file=clientcred_secret, scopes=scopes)
 
-if not path.exists("usercred.secret"):
+if not path.exists(usercred_secret):
     print("No usercred.secret, registering application")
 #    email = input("Email: ")
 #    password = getpass("Password: ")
@@ -18,7 +23,7 @@ if not path.exists("usercred.secret"):
 #    client.log_in(email, password, to_file="usercred.secret")
     print("Visit this url:")
     print(client.auth_request_url(scopes=scopes))
-    client.log_in(code=input("Secret: "), to_file="usercred.secret", scopes=scopes)
+    client.log_in(code=input("Secret: "), to_file=usercred_secret, scopes=scopes)
 
 
 def parse_toot(toot):
@@ -80,14 +85,14 @@ def get_toots(client, id):
             print(i)
 
 client = Mastodon(
-        client_id="clientcred.secret", 
-        access_token="usercred.secret", 
+        client_id=clientcred_secret, 
+        access_token=usercred_secret, 
         api_base_url=api_base_url)
 
 me = client.account_verify_credentials()
 following = client.account_following(me.id)
 
-with open("corpus.txt", "w+") as fp:
+with open(corpus, "w+") as fp:
     for f in following:
         print(f.username)
         for t in get_toots(client, f.id):
