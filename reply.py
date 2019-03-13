@@ -43,11 +43,11 @@ def createListener(user_directory):
 
 if __name__ == "__main__":
     import sys
-    print("creating listener for", sys.argv[1])
     # createListener(sys.argv[1])
     user_directory = sys.argv[1]
     directories = [path.join(user_directory, x) for x in listdir(user_directory) if not path.isfile(path.join(user_directory, x))]
     for x in directories:
+        print("loading listener for", x)
         t0 = threading.Thread(target=createListener, args=[x,])
         t0.start()
 
