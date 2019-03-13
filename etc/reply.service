@@ -1,0 +1,13 @@
+[Unit]
+Description=mstdn-ebooks bot replier
+After=network.target
+[Service]
+Type=simple
+User=your-username
+WorkingDirectory=/working/dir
+ExecStart=venv/bin/python reply.py users
+TimeoutSec=3600
+Restart=always
+[Install]
+WantedBy=multi-user.target  
+
